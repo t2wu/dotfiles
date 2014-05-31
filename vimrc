@@ -15,6 +15,7 @@ set hidden
 
 set langmenu=en_US
 let $LANG = 'en_US'
+set encoding=utf-8
 
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
@@ -194,7 +195,6 @@ filetype plugin indent on    " required
 " ============================================================================
 " Tim: jedi vim
 Bundle 'davidhalter/jedi-vim'
-let g:Powerline_symbols = 'fancy'
 let g:jedi#completions_command = "<C-N>"
 " let g:jedi#popup_on_dot = 0
 " let g:jedi#usages_command = "<leader>z"
@@ -209,10 +209,23 @@ let g:jedi#auto_close_doc = 0
 " Settings for vim-powerline
 " cd ~/.vim/bundle
 " git clone git://github.com/Lokaltog/vim-powerline.git
-"" set laststatus=2
 Bundle 'Lokaltog/powerline'
-set laststatus=2
+set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
+let g:Powerline_symbols = 'fancy'
+"set laststatus=2
+set noshowmode
 set ambiwidth=single
+set guifont=Inconsolata\ for\ Powerline
+
+" powerline escape out of insert fast
+if ! has('gui_running')
+    set ttimeoutlen=10
+    augroup FastEscape
+        autocmd!
+        au InsertEnter * set timeoutlen=0
+        au InsertLeave * set timeoutlen=1000
+    augroup END
+endif
 
 " Settings for ctrlp
 " cd ~/.vim/bundle
