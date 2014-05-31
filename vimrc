@@ -7,6 +7,11 @@
 " DO NOT USE <C-z> FOR SAVING WHEN PRESENTING!
 " ============================================
 
+" Do ; for :
+noremap ; :
+
+" Don't force save when switching between files
+set hidden
 
 set langmenu=en_US
 let $LANG = 'en_US'
@@ -19,13 +24,13 @@ autocmd! bufwritepost .vimrc source %
 " When you want to paste large blocks of code into vim, press F2 before you
 " paste. At the bottom you should see ``-- INSERT (paste) --``.
 
-set pastetoggle=<F2>
-set clipboard=unnamed
+"set pastetoggle=<F2>
+"set clipboard=unnamed
 
 
 " Mouse and backspace
 "" set mouse=a  " on OSX press ALT and click
-"" set bs=2     " make backspace behave like normal again
+" set bs=2     " make backspace behave like normal again
 
 
 " Rebind <Leader> key
@@ -37,9 +42,9 @@ let mapleader = ","
 " Bind nohl
 " Removes highlight of your last search
 " ``<C>`` stands for ``CTRL`` and therefore ``<C-n>`` stands for ``CTRL+n``
-"" noremap <C-n> :nohl<CR>
-"" vnoremap <C-n> :nohl<CR>
-"" inoremap <C-n> :nohl<CR>
+noremap <C-n> :nohlsearch<CR>
+vnoremap <C-n> :nohlsearch<CR>
+inoremap <C-n> :nohlsearch<CR>
 
 
 " Quicksave command
@@ -60,7 +65,6 @@ map <c-k> <c-w>k
 map <c-l> <c-w>l
 map <c-h> <c-w>h
 
-
 map <Leader>n <esc>:tabprevious<CR>
 map <Leader>m <esc>:tabnext<CR>
 
@@ -68,18 +72,11 @@ map <Leader>m <esc>:tabnext<CR>
 " map sort function to a key
 "" vnoremap <Leader>s :sort<CR>
 
-
-" easier moving of code blocks
-" Try to go into visual mode (v), thenselect several lines of code here and
-" then press ``>`` several times.
-"" vnoremap < <gv  " better indentation
-"" vnoremap > >gv  " better indentation
-
-
 " Show whitespace
 " MUST be inserted BEFORE the colorscheme command
-"" autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
-"" au InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd! ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+
+au InsertLeave * match ExtraWhitespace /\s\+$/
 
 
 " Color scheme
@@ -116,9 +113,11 @@ set fo-=t   " don't automatically wrap text when typing
 
 
 " Real programmers don't use TABs but spaces
-set tabstop=4
+autocmd BufNewFile,BufRead *.py set tabstop=4
+autocmd BufNewFile,BufRead *.js set tabstop=2
 "" set softtabstop=4
-set shiftwidth=4
+autocmd BufNewFile,BufRead *.py set shiftwidth=4
+autocmd BufNewFile,BufRead *.js set shiftwidth=2
 "" set shiftround
 set expandtab
 
@@ -134,7 +133,7 @@ set hlsearch
 " for file system watchers
 set nobackup
 "" set nowritebackup
-"" set noswapfile
+set noswapfile
 
 
 " Setup Pathogen to manage your plugins
@@ -170,7 +169,10 @@ let g:jedi#completions_command = "<C-N>"
 let g:jedi#auto_close_doc = 0
 "let g:jedi#auto_vim_configuration = 0
 
-Bundle 'ervandew/supertab'
+"Bundle 'ervandew/supertab'
+
+" Tim: You complete me
+" Bundle 'Valloric/YouCompleteMe'
 
 filetype plugin indent on     " required
 " To ignore plugin indent changes, instead use:
@@ -197,6 +199,7 @@ filetype plugin indent on     " required
 "" set laststatus=2
 Bundle 'Lokaltog/powerline'
 set laststatus=2
+set ambiwidth=single
 
 " Settings for ctrlp
 " cd ~/.vim/bundle
@@ -233,7 +236,23 @@ set laststatus=2
 "" inoremap <silent><C-k> <C-R>=OmniPopup('k')<CR>
 
 
-" Python folding
-" mkdir -p ~/.vim/ftplugin
-" wget -O ~/.vim/ftplugin/python_editing.vim http://www.vim.org/scripts/download_script.php?src_id=5492
-set nofoldenable
+" tim: fold with space
+set foldlevel=999
+set foldmethod=indent
+nnoremap  <silent>  <space> :exe 'silent! normal! za'.(foldlevel('.')?'':'l')<cr>
+
+" awesome! Tab completion
+function! InsertTabWrapper()
+   let col = col('.') - 1
+   if !col || getline('.')[col - 1] !~ '\k'
+       return "\<tab>"
+   else
+       return "\<c-p>"
+   endif
+endfunction
+inoremap <tab> <c-r>=InsertTabWrapper()<cr>
+" end tab completion
+
+" show preview window on Python files start up
+autocmd BufNewFile,BufRead *.py botright vertical pedit previewwindow
+autocmd BufNewFile,BufRead *.py vertical resize 120
