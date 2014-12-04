@@ -95,7 +95,7 @@ syntax on
 
 
 " Showing line numbers and length
-set number  " show line numbers
+"set number  " show line numbers
 set tw=79   " width of document (used by gd)
 set nowrap  " don't automatically wrap on load
 set fo-=t   " don't automatically wrap text when typing
@@ -116,9 +116,11 @@ set fo-=t   " don't automatically wrap text when typing
 " Real programmers don't use TABs but spaces
 autocmd BufNewFile,BufRead *.py set tabstop=4
 autocmd BufNewFile,BufRead *.js set tabstop=2
+autocmd BufNewFile,BufRead *.html set tabstop=2
 "" set softtabstop=4
 autocmd BufNewFile,BufRead *.py set shiftwidth=4
 autocmd BufNewFile,BufRead *.js set shiftwidth=2
+autocmd BufNewFile,BufRead *.html set shiftwidth=2
 "" set shiftround
 set expandtab
 
@@ -212,8 +214,8 @@ let g:jedi#auto_close_doc = 0
 Bundle 'Lokaltog/powerline'
 set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 let g:Powerline_symbols = 'fancy'
-"set laststatus=2
-set noshowmode
+set laststatus=2
+set noshowmode " doesn't show any more insert when powerline does
 set ambiwidth=single
 set guifont=Inconsolata\ for\ Powerline
 
@@ -234,15 +236,6 @@ endif
 "" set wildignore+=*.pyc
 "" set wildignore+=*_build/*
 "" set wildignore+=*/coverage/*
-
-
-" Settings for jedi-vim
-" cd ~/.vim/bundle
-" git clone git://github.com/davidhalter/jedi-vim.git
-" let g:jedi#related_names_command = "<leader>z"
-" let g:jedi#popup_on_dot = 0
-" let g:jedi#popup_select_first = 0
-" map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
 
 " Better navigating through omnicomplete option list
 " See http://stackoverflow.com/questions/2170023/how-to-map-keys-for-popup-menu-in-vim
@@ -279,6 +272,25 @@ endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 " end tab completion
 
+" Split window setting
+" http://technotales.wordpress.com/2010/04/29/vim-splits-a-guide-to-doing-exactly-what-you-want/
+nmap <leader>sw<left>  :topleft  vnew<CR>
+nmap <leader>sw<right> :botright vnew<CR>
+nmap <leader>sw<up>    :topleft  new<CR>
+nmap <leader>sw<down>  :botright new<CR>
+
+" buffer
+nmap <leader>s<left>   :leftabove  vnew<CR>
+nmap <leader>s<right>  :rightbelow vnew<CR>
+nmap <leader>s<up>     :leftabove  new<CR>
+nmap <leader>s<down>   :rightbelow new<CR>
+
 " show preview window on Python files start up
-autocmd BufNewFile,BufRead *.py botright vertical pedit previewwindow
-autocmd BufNewFile,BufRead *.py vertical resize 120
+set splitbelow
+"autocmd BufNewFile,BufRead *.py topleft pedit previewwindow
+"autocmd BufNewFile,BufRead *.py previewheight 50
+set previewheight=7
+"autocmd BufNewFile,BufRead *.py botright vertical pedit previewwindow
+"autocmd BufNewFile,BufRead *.py vertical resize 120
+autocmd FileType Python nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
+pclose
